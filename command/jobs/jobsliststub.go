@@ -23,7 +23,7 @@ func NewJobListStubFirehose() (*JobListStubFirehose, error) {
 }
 
 func (f *JobListStubFirehose) Name() string {
-	return "jobliststub"
+	return "jobliststub-" + f.sink.Name()
 }
 
 func (f *JobListStubFirehose) Start() {

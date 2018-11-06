@@ -23,7 +23,7 @@ func NewNodeListStubFirehose() (*NodeListStubFirehose, error) {
 }
 
 func (f *NodeListStubFirehose) Name() string {
-	return "nodeliststub"
+	return "nodeliststub-" + f.sink.Name()
 }
 
 func (f *NodeListStubFirehose) Start() {

@@ -137,3 +137,8 @@ func (s *MongodbSink) write(id int) {
 		}
 	}
 }
+
+// Name ..
+func (s *MongodbSink) Name() string {
+	return "mongodb"
+}

@@ -42,7 +42,7 @@ func NewFirehose() (*Firehose, error) {
 }
 
 func (f *Firehose) Name() string {
-	return "deployments"
+	return "deployments-" + f.sink.Name()
 }
 
 func (f *Firehose) UpdateCh() <-chan interface{} {

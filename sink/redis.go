@@ -102,3 +102,8 @@ func (s *RedisSink) write() {
 		}
 	}
 }
+
+// Name ..
+func (s *RedisSink) Name() string {
+	return "redis"
+}

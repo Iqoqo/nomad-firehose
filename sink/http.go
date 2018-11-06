@@ -101,3 +101,8 @@ func (s *HttpSink) send(id int) {
 		}
 	}
 }
+
+// Name ..
+func (s *HttpSink) Name() string {
+	return "http"
+}

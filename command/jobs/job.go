@@ -24,7 +24,7 @@ func NewJobFirehose() (*JobFirehose, error) {
 
 
 func (f *JobFirehose) Name() string {
-	return "jobs"
+	return "jobs-" + f.sink.Name()
 }
 
 // Publish an update from the firehose

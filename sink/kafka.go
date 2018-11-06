@@ -139,3 +139,8 @@ func (s *KafkaSink) write() {
 		}
 	}
 }
+
+// Name ..
+func (s *KafkaSink) Name() string {
+	return "kafka"
+}
