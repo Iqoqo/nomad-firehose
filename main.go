@@ -58,10 +58,10 @@ func main() {
 			},
 		},
 		{
-			Name:  "nodes",
-			Usage: "Firehose nomad node changes",
+			Name:  "nodeliststubs",
+			Usage: "Firehose nomad node stub changes",
 			Action: func(c *cli.Context) error {
-				firehose, err := nodes.NewFirehose()
+				firehose, err := nodes.NewNodeListStubFirehose()
 				if err != nil {
 					return err
 				}
