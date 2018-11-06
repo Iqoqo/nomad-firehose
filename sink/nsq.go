@@ -94,3 +94,8 @@ func (s *NSQSink) write(id int) {
 		}
 	}
 }
+
+// Name ..
+func (s *NSQSink) Name() string {
+	return "nsq"
+}

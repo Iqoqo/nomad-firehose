@@ -136,3 +136,8 @@ func (s *RabbitmqSink) write(id int) {
 		}
 	}
 }
+
+// RabbitmqSink ..
+func (s *RabbitmqSink) Name() string {
+	return "rabbitmq"
+}

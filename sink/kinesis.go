@@ -112,3 +112,8 @@ func (s *KinesisSink) write(id int) {
 		}
 	}
 }
+
+// Name ..
+func (s *KinesisSink) Name() string {
+	return "kinesis"
+}

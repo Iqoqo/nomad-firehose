@@ -60,7 +60,7 @@ func NewFirehose() (*Firehose, error) {
 }
 
 func (f *Firehose) Name() string {
-	return "allocations"
+	return "allocations-" + f.sink.Name()
 }
 
 func (f *Firehose) UpdateCh() <-chan interface{} {

@@ -55,3 +55,9 @@ func (s *StdoutSink) Put(data []byte) error {
 	fmt.Println(string(data))
 	return nil
 }
+
+// Name ..
+func (s *StdoutSink) Name() string {
+	return "stdout"
+}
+
