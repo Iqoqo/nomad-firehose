@@ -55,6 +55,13 @@ func NewMongodb() (*MongodbSink, error) {
 		return nil, fmt.Errorf("Invalid SINK_MONGODB_WORKERS, must be an integer")
 	}
 
+	timestampsStr := os.Getenv("SINK_MONGODB_TIMESTAMPS")
+	if timestampsStr == "" {
+		timestampsStr = "false"
+	}
+
+	timestamps, err := strconv.ParseBool(timestampsStr)
+
 	if err != nil {
 		return nil, fmt.Errorf("Invalid SINK_MONGODB_WORKERS, must be an integer")
 	}
@@ -71,6 +78,7 @@ func NewMongodb() (*MongodbSink, error) {
 		collection:  collection,
 		idField:     idField,
 		workerCount: workerCount,
+		timestamps:  timestamps,
 		stopCh:      make(chan interface{}),
 		putCh:       make(chan []byte, 1000),
 	}, nil
@@ -132,6 +140,11 @@ func (s *MongodbSink) write(id int) {
 				continue
 			}
 
+			update := bson.M{"$set": record}
+			if (s.timestamps) {
+				update["$currentDate"] = bson.M{"UpdatedAt": true}
+				update["$setOnInsert"] = bson.M{"CreatedAt": time.Now()}
+			}
 			if (s.idField != "") {
 				id := record[s.idField].(string)
 				if (id == "") {
