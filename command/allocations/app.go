@@ -29,7 +29,7 @@ type AllocationUpdate struct {
 	ClientStatus       string
 	ClientDescription  string
 	JobID              string
-	GroupName          string
+	TaskGroup          string
 	ModifyTime         int64
 	TaskName           string
 	EvalID             string
