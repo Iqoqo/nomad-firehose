@@ -42,7 +42,7 @@ func NewHttp() (*HttpSink, error) {
 		address:     address,
 		workerCount: workerCount,
 		stopCh:      make(chan interface{}),
-		putCh:       make(chan []byte, 1000),
+		putCh:       make(chan []byte, 10000),
 	}, nil
 }
 
@@ -96,7 +96,7 @@ func (s *HttpSink) send(id int) {
 			if err != nil {
 				log.Errorf("[sink/http/%d] %s", id, err)
 			} else {
-				log.Debugf("[sink/http/%d] publish ok", id)
+				log.Debugf("[sink/http/%d] publish ok(%d messages left)", id, len(s.putCh))
 			}
 		}
 	}
