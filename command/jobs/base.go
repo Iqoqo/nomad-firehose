@@ -131,9 +131,7 @@ func (f *FirehoseBase) watch(w WatchJobListFunc) {
 		for _, job := range jobs {
 			if job.JobSummary.ModifyIndex <= newMax {
 				continue
-			}
-
-			if job.ModifyIndex > newMax {
+			} else {
 				newMax = job.JobSummary.ModifyIndex
 			}
 
