@@ -122,8 +122,6 @@ func (f *Firehose) watch() {
 		AllowStale: true,
 	}
 
-	newMax := f.lastChangeIndex
-
 	for {
 		log.Infof("Fetching evaluations from Nomad: %+v", q)
 
@@ -147,12 +145,8 @@ func (f *Firehose) watch() {
 
 		// Iterate clients and find events that have changed since last run
 		for _, evaluation := range evaluations {
-			if evaluation.ModifyIndex <= newMax {
+			if evaluation.ModifyIndex < evaluation.ModifyIndex {
 				continue
-			}
-
-			if evaluation.ModifyIndex > newMax {
-				newMax = evaluation.ModifyIndex
 			}
 
 			f.Publish(evaluation)
