@@ -52,3 +52,11 @@ $(BINARIES): $(BUILD_DIR)/nomad-firehose-%: $(BUILD_DIR)
 dist: install fmt vet
 	@echo "=> building ..."
 	$(MAKE) -j $(BINARIES)
+
+.PHONY: docker
+docker:
+	@echo "=> build and push Docker image ..."
+	docker build -f Dockerfile -t iqoqo/nomad-firehose:$(GIT_COMMIT) .
+	docker tag iqoqo/nomad-firehose:$(GIT_COMMIT) iqoqo/nomad-firehose:$(TAG)
+	docker push iqoqo/nomad-firehose:$(GIT_COMMIT)
+	docker push iqoqo/nomad-firehose:$(TAG)
