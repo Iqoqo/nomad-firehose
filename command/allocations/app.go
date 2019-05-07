@@ -19,27 +19,6 @@ type Firehose struct {
 	stopCh           chan struct{}
 }
 
-// AllocationUpdate ...
-type AllocationUpdate struct {
-	Name               string
-	NodeID             string
-	AllocationID       string
-	DesiredStatus      string
-	DesiredDescription string
-	ClientStatus       string
-	ClientDescription  string
-	JobID              string
-	TaskGroup          string
-	ModifyTime         int64
-	TaskName           string
-	EvalID             string
-	TaskState          string
-	TaskFailed         bool
-	TaskStartedAt      *time.Time
-	TaskFinishedAt     *time.Time
-	TaskEvents         []*nomad.TaskEvent
-}
-
 // NewFirehose ...
 func NewFirehose() (*Firehose, error) {
 	nomadClient, err := nomad.NewClient(nomad.DefaultConfig())
@@ -126,7 +105,7 @@ func (f *Firehose) persistLastChangeTime(interval time.Duration) {
 }
 
 // publish an update from the firehose
-func (f *Firehose) publish(update *AllocationUpdate) {
+func (f *Firehose) publish(update *nomad.AllocationListStub) {
 	b, err := json.Marshal(update)
 	if err != nil {
 		log.Error(err)
@@ -164,33 +143,11 @@ func (f *Firehose) watch() {
 
 		// Iterate allocations and find events that have changed since last run
 		for _, allocation := range allocations {
-			for taskName, taskInfo := range allocation.TaskStates {
-				if allocation.ModifyIndex <= f.lastChangeIndex {
-					continue
-				}
-
-				payload := &AllocationUpdate{
-					Name:               allocation.Name,
-					NodeID:             allocation.NodeID,
-					AllocationID:       allocation.ID,
-					EvalID:             allocation.EvalID,
-					DesiredStatus:      allocation.DesiredStatus,
-					DesiredDescription: allocation.DesiredDescription,
-					ClientStatus:       allocation.ClientStatus,
-					ClientDescription:  allocation.ClientDescription,
-					JobID:              allocation.JobID,
-					TaskGroup:          allocation.TaskGroup,
-					ModifyTime:         allocation.ModifyTime,
-					TaskName:           taskName,
-					TaskEvents:         taskInfo.Events,
-					TaskState:          taskInfo.State,
-					TaskFailed:         taskInfo.Failed,
-					TaskStartedAt:      &taskInfo.StartedAt,
-					TaskFinishedAt:     &taskInfo.FinishedAt,
-				}
-
-				f.publish(payload)
+			if allocation.ModifyIndex <= f.lastChangeIndex {
+				continue
 			}
+
+			f.publish(allocation)
 		}
 
 		// Update WaitIndex and Last Change Index for next iteration
