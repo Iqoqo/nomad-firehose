@@ -37,6 +37,12 @@ func main() {
 			Usage:  "json or text",
 			EnvVar: "LOG_FORMAT",
 		},
+		cli.StringFlag{
+			Name:   "name",
+			Value:  "nomad-firehose",
+			Usage:  "directory name of the keys in consul",
+			EnvVar: "NAME",
+		},
 	}
 	app.Commands = []cli.Command{
 		{
@@ -47,8 +53,7 @@ func main() {
 				if err != nil {
 					return err
 				}
-
-				manager := helper.NewManager(firehose)
+				manager := helper.NewManager(c.String("name"), firehose)
 				if err := manager.Start(); err != nil {
 					log.Fatal(err)
 					return err
@@ -56,6 +61,7 @@ func main() {
 
 				return nil
 			},
+			Flags: app.Flags,
 		},
 		{
 			Name:  "nodeliststubs",
@@ -66,7 +72,7 @@ func main() {
 					return err
 				}
 
-				manager := helper.NewManager(firehose)
+				manager := helper.NewManager(c.String("name"), firehose)
 				if err := manager.Start(); err != nil {
 					log.Fatal(err)
 					return err
@@ -74,6 +80,7 @@ func main() {
 
 				return nil
 			},
+			Flags: app.Flags,
 		},
 		{
 			Name:  "nodes",
@@ -84,7 +91,7 @@ func main() {
 					return err
 				}
 
-				manager := helper.NewManager(firehose)
+				manager := helper.NewManager(c.String("name"), firehose)
 				if err := manager.Start(); err != nil {
 					log.Fatal(err)
 					return err
@@ -92,6 +99,7 @@ func main() {
 
 				return nil
 			},
+			Flags: app.Flags,
 		},
 		{
 			Name:  "evaluations",
@@ -102,7 +110,7 @@ func main() {
 					return err
 				}
 
-				manager := helper.NewManager(firehose)
+				manager := helper.NewManager(c.String("name"), firehose)
 				if err := manager.Start(); err != nil {
 					log.Fatal(err)
 					return err
@@ -110,6 +118,7 @@ func main() {
 
 				return nil
 			},
+			Flags: app.Flags,
 		},
 		{
 			Name:  "jobs",
@@ -120,7 +129,7 @@ func main() {
 					return err
 				}
 
-				manager := helper.NewManager(firehose)
+				manager := helper.NewManager(c.String("name"), firehose)
 				if err := manager.Start(); err != nil {
 					log.Fatal(err)
 					return err
@@ -128,6 +137,7 @@ func main() {
 
 				return nil
 			},
+			Flags: app.Flags,
 		},
 		{
 			Name:  "jobliststubs",
@@ -138,7 +148,7 @@ func main() {
 					return err
 				}
 
-				manager := helper.NewManager(firehose)
+				manager := helper.NewManager(c.String("name"), firehose)
 				if err := manager.Start(); err != nil {
 					log.Fatal(err)
 					return err
@@ -146,6 +156,7 @@ func main() {
 
 				return nil
 			},
+			Flags: app.Flags,
 		},
 		{
 			Name:  "deployments",
@@ -156,7 +167,7 @@ func main() {
 					return err
 				}
 
-				manager := helper.NewManager(firehose)
+				manager := helper.NewManager(c.String("name"), firehose)
 				if err := manager.Start(); err != nil {
 					log.Fatal(err)
 					return err
@@ -164,9 +175,11 @@ func main() {
 
 				return nil
 			},
+			Flags: app.Flags,
 		},
 	}
 	app.Before = func(c *cli.Context) error {
+
 		// convert the human passed log level into logrus levels
 		level, err := log.ParseLevel(c.String("log-level"))
 		if err != nil {

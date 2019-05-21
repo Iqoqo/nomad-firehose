@@ -19,8 +19,9 @@ type Runner interface {
 	UpdateCh() <-chan interface{}
 }
 
-func NewManager(r Runner) *Manager {
+func NewManager(name string, r Runner) *Manager {
 	return &Manager{
+		name: name,
 		runner: r,
 		logger: log.WithField("type", r.Name()),
 		stopCh: make(chan interface{}),
@@ -30,6 +31,7 @@ func NewManager(r Runner) *Manager {
 
 type Manager struct {
 	runner                   Runner
+	name                     string
 	client                   *consulapi.Client
 	lock                     *consulapi.Lock
 	lockCh                   <-chan struct{}  // lock channel used by Consul SDK to notify about changes
@@ -76,7 +78,7 @@ func (m *Manager) continuouslyAcquireConsulLeadership() error {
 
 // Read the Last Change Time from Consul KV, so we don't re-process tasks over and over on restart
 func (m *Manager) restoreLastChangeTime() interface{} {
-	kv, _, err := m.client.KV().Get(fmt.Sprintf("nomad-firehose/%s.value", m.runner.Name()), nil)
+	kv, _, err := m.client.KV().Get(fmt.Sprintf("%s/%s.value", m.name, m.runner.Name()), nil)
 	if err != nil {
 		return 0
 	}
@@ -102,8 +104,8 @@ func (m *Manager) restoreLastChangeTime() interface{} {
 func (m *Manager) acquireConsulLeadership() error {
 	var err error
 	m.lock, err = m.client.LockOpts(&consulapi.LockOptions{
-		Key:              fmt.Sprintf("nomad-firehose/%s.lock", m.runner.Name()),
-		SessionName:      fmt.Sprintf("nomad-firehose-%s", m.runner.Name()),
+		Key:              fmt.Sprintf("%s/%s.lock", m.name, m.runner.Name()),
+		SessionName:      fmt.Sprintf("%s-%s", m.name, m.runner.Name()),
 		MonitorRetries:   10,
 		MonitorRetryTime: 5 * time.Second,
 	})
@@ -161,7 +163,7 @@ func (m *Manager) acquireConsulLeadership() error {
 
 			m.logger.Debug("Writing lastChangedTime to KV: %s", r)
 			kv := &consulapi.KVPair{
-				Key:   fmt.Sprintf("nomad-firehose/%s.value", m.runner.Name()),
+				Key:   fmt.Sprintf("%s/%s.value", m.name, m.runner.Name()),
 				Value: []byte(r),
 			}
 			_, err := m.client.KV().Put(kv, nil)
