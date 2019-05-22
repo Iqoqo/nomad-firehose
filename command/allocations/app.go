@@ -143,11 +143,9 @@ func (f *Firehose) watch() {
 
 		// Iterate allocations and find events that have changed since last run
 		for _, allocation := range allocations {
-			if allocation.ModifyIndex <= f.lastChangeIndex {
-				continue
+			if allocation.ModifyIndex > f.lastChangeIndex {
+				f.publish(allocation)
 			}
-
-			f.publish(allocation)
 		}
 
 		// Update WaitIndex and Last Change Index for next iteration

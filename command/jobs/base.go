@@ -127,11 +127,9 @@ func (f *FirehoseBase) watch(w WatchJobListFunc) {
 
 		// Iterate jobs and find events that have changed since last run
 		for _, job := range jobs {
-			if job.ModifyIndex <= f.lastChangeIndex {
-				continue
+			if job.ModifyIndex > f.lastChangeIndex {
+				w(job)
 			}
-
-			w(job)
 		}
 
 		// Update WaitIndex and Last Change Time for next iteration
