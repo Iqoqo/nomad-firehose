@@ -145,11 +145,9 @@ func (f *Firehose) watch() {
 
 		// Iterate clients and find events that have changed since last run
 		for _, evaluation := range evaluations {
-			if evaluation.ModifyIndex <= f.lastChangeIndex {
-				continue
+			if evaluation.ModifyIndex > f.lastChangeIndex {
+				f.Publish(evaluation)
 			}
-
-			f.Publish(evaluation)
 		}
 
 		// Update WaitIndex and Last Change Time for next iteration
