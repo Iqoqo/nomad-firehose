@@ -94,9 +94,11 @@ func (s *HttpSink) send(id int) {
 		case data := <-s.putCh:
 			buffer := bytes.NewBuffer(data[:])
 			log.Debugf("[sink/http/%d] publishing to %s %v", id, s.address, buffer)
-			_, err := http.Post(s.address, "application/json; charset=utf-8", buffer)
+			resp, err := http.Post(s.address, "application/json; charset=utf-8", buffer)
 			if err != nil {
 				log.Errorf("[sink/http/%d] %s", id, err)
+			} else if resp.StatusCode >= 400 {
+				log.Errorf("[sink/http/%d] %s", id, resp.Status)
 			} else {
 				log.Debugf("[sink/http/%d] publish ok(%d messages left)", id, len(s.putCh))
 			}
