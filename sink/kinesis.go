@@ -35,8 +35,10 @@ func NewKinesis() (*KinesisSink, error) {
 		return nil, fmt.Errorf("[sink/kinesis] Missing SINK_KINESIS_PARTITION_KEY")
 	}
 
+	endpoint := os.Getenv("SINK_KINESIS_ENDPOINT")
+
 	sess := session.Must(session.NewSession())
-	svc := kinesis.New(sess)
+	svc := kinesis.New(sess, &aws.Config{Endpoint: aws.String(endpoint)})
 
 	return &KinesisSink{
 		session:      sess,
