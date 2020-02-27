@@ -31,6 +31,8 @@ func GetSink() (Sink, error) {
 		return NewHttp()
 	case "stdout":
 		return NewStdout()
+	case "sns":
+		return NewSNS()
 	default:
 		return nil, fmt.Errorf("Invalid SINK_TYPE: %s, Valid values: amqp, kafka, kinesis, nsq, rabbitmq, redis, mongodb, http or stdout", sinkType)
 	}
