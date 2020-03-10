@@ -51,6 +51,7 @@
     "private/protocol/rest",
     "private/protocol/xml/xmlutil",
     "service/kinesis",
+    "service/sns",
     "service/sts",
   ]
   pruneopts = "UT"
@@ -384,6 +385,7 @@
     "github.com/aws/aws-sdk-go/aws",
     "github.com/aws/aws-sdk-go/aws/session",
     "github.com/aws/aws-sdk-go/service/kinesis",
+    "github.com/aws/aws-sdk-go/service/sns",
     "github.com/garyburd/redigo/redis",
     "github.com/globalsign/mgo",
     "github.com/globalsign/mgo/bson",
